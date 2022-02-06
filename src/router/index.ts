@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 
 import Home from '../views/home.vue'
 import Login from '../views/login.vue'
+import Test from '@/views/test.vue'
 
 Vue.use( VueRouter )
 
@@ -25,6 +26,11 @@ const routes : Array<RouteConfig> = [
 		// this generates a separate chunk (about.[hash].js) for this route
 		// which is lazy-loaded when the route is visited.
 		component : () => import(/* webpackChunkName: "about" */ '../views/about.vue')
+	},
+	{
+		path : '/test',
+		name : 'test',
+		component : Test
 	}
 
 ]
