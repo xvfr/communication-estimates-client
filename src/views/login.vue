@@ -1,51 +1,59 @@
 <template>
 
   <v-layout justify-center align-center fill-height>
-	<v-flex sm7 md3 class="px-5">
+	<v-flex sm7 md5 lg3 class="px-5">
 
 	  <v-card
-		  class="pb-5 px-5 text-center"
+		  class="text-center"
 		  elevation="2"
 		  outlined
 		  shaped>
 
-		 <v-alert
-			class="mt-5 mb-0"
-			color="error"
+		<v-alert
+			class="mt-5 mb-0 mx-5"
 			dense
 			outlined
 			shaped
+			type="error"
 		>
 		  <b>Ошибка!</b> % error message %
 		</v-alert>
 
-		<v-card-title>Авторизация</v-card-title>
+		<v-card-title class="d-block">
+		  <h2 class="display-1">Авторизация</h2>
+		</v-card-title>
 
-		<v-form
-			v-model="valid">
+		<v-card-text>
 
-		  <v-text-field
-			  label="Логин"
-			  v-model="login"
-			  required
-			  :rules="loginRules"
-		  />
-		  <v-text-field
-			  label="Пароль"
-			  v-model="password"
-			  required
-			  :rules="passwordRules"
-			  type="password"
-		  />
+		  <v-form
+			  v-model="valid">
 
-		  <v-btn
-			  color="primary"
-			  :disabled="!valid"
-		  >
-			Авторизоваться
-		  </v-btn>
+			<v-text-field
+				label="Логин или e-mail"
+				v-model="login"
+				required
+				:rules="loginRules"
+			/>
+			<v-text-field
+				label="Пароль"
+				v-model="password"
+				required
+				:rules="passwordRules"
+				type="password"
+			/>
 
-		</v-form>
+			<v-btn
+				color="primary"
+				outlined
+				:disabled="!valid"
+			>
+			  Авторизоваться
+			</v-btn>
+
+		  </v-form>
+
+		</v-card-text>
+
 	  </v-card>
 
 	</v-flex>
@@ -78,5 +86,3 @@ export default Vue.extend( {
 } )
 
 </script>
-
-<style lang="scss" scoped></style>

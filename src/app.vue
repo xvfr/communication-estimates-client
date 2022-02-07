@@ -8,7 +8,10 @@
 		<v-app-bar-title>% app name %</v-app-bar-title>
 
 		<nav class="navigation hidden-md-and-down pl-4">
-		  <navigation-link v-for="route in routes" :key="route.link" :link="route.link">{{ route.text }}</navigation-link>
+		  <navigation-link v-for="route in routes" :key="route.link" :link="route.link">{{
+			  route.placeholder
+			}}
+		  </navigation-link>
 		</nav>
 
 	  </v-app-bar>
@@ -26,6 +29,11 @@
 import Vue from 'vue'
 import navigationLink from '@/components/navigation-link.vue'
 
+interface iNavigationLink {
+	placeholder? : string,
+	link : string,
+}
+
 export default Vue.extend( {
 	name : 'app',
 
@@ -34,39 +42,19 @@ export default Vue.extend( {
 	},
 
 	data : () => ( {
+		routes : [] as Array<iNavigationLink>
+	} ),
 
-		routes : [
-			{
-				text : 'Авторизация',
-				link : '/login'
-			},
-			{
-				text : 'Подрядчики',
-				link : '/about'
-			},
-			{
-				text : 'Исполнители',
-				link : '/about'
-			},
-			{
-				text : 'Заказчики',
-				link : '/about'
-			},
-			{
-				text : 'Home',
-				link : '/'
-			},
-			{
-				text : 'Vuetify',
-				link : '/test'
-			},
-			{
-				text : 'About',
-				link : '/about'
-			}
-		]
-
-	} )
+	created () {
+		this.routes = this.$router.getRoutes().filter( rt =>
+			( rt.meta.requiredAuth === undefined
+				|| rt.meta.requiredAuth === this.$store.state.isAuthorized
+			) && rt.meta.isNavigationLink
+		).map( rt => ( {
+			placeholder : rt.name,
+			link : rt.path || '/'
+		} ) )
+	}
 
 } )
 
