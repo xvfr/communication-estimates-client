@@ -4,10 +4,10 @@
 
 	  <v-app-bar dense app>
 
-		<v-app-bar-nav-icon class="d-md-none"></v-app-bar-nav-icon>
+		<v-app-bar-nav-icon class="hidden-md-and-up"></v-app-bar-nav-icon>
 		<v-app-bar-title>% app name %</v-app-bar-title>
 
-		<nav class="navigation d-none d-md-block pl-4">
+		<nav class="navigation hidden-md-and-down pl-4">
 		  <navigation-link v-for="route in routes" :key="route.link" :link="route.link">{{ route.text }}</navigation-link>
 		</nav>
 
