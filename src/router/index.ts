@@ -74,7 +74,7 @@ router.beforeEach( ( to, from, next ) => {
 
 	const
 		requiredAuth = to.meta.requiredAuth,
-		isAuthorized = store.state.isAuthorized
+		isAuthorized = store.getters.isAuthorized
 
 	if ( requiredAuth === undefined )
 		return next()

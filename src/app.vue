@@ -5,7 +5,7 @@
 	  <v-app-bar dense app>
 
 		<v-app-bar-nav-icon class="hidden-md-and-up"></v-app-bar-nav-icon>
-		<v-app-bar-title>% app name %</v-app-bar-title>
+		<v-app-bar-title>communication-estimates</v-app-bar-title>
 
 		<nav class="navigation hidden-md-and-down pl-4">
 		  <navigation-link v-for="route in routes" :key="route.link" :link="route.link">{{
@@ -14,10 +14,12 @@
 		  </navigation-link>
 		</nav>
 
+		<v-btn v-if="isAuthorized" @click="logout" class="logout" plain small>Выйти</v-btn>
+
 	  </v-app-bar>
 
 	  <v-main app>
-		<router-view/>
+		<router-view />
 	  </v-main>
 
 	</v-app>
@@ -46,14 +48,35 @@ export default Vue.extend( {
 	} ),
 
 	created () {
-		this.routes = this.$router.getRoutes().filter( rt =>
-			( rt.meta.requiredAuth === undefined
-				|| rt.meta.requiredAuth === this.$store.state.isAuthorized
-			) && rt.meta.isNavigationLink
-		).map( rt => ( {
-			placeholder : rt.name,
-			link : rt.path || '/'
-		} ) )
+		this.renderNavigation()
+	},
+
+	computed : {
+
+		isAuthorized () {
+			this.renderNavigation()
+			return this.$store.getters.isAuthorized
+		}
+
+	},
+
+	methods : {
+
+		logout () {
+			this.$store.dispatch( 'logout' )
+		},
+
+		renderNavigation () {
+			this.routes = this.$router.getRoutes().filter( rt =>
+				( rt.meta.requiredAuth === undefined
+					|| rt.meta.requiredAuth === this.$store.getters.isAuthorized
+				) && rt.meta.isNavigationLink
+			).map( rt => ( {
+				placeholder : rt.name,
+				link : rt.path || '/'
+			} ) )
+		}
+
 	}
 
 } )
@@ -62,12 +85,21 @@ export default Vue.extend( {
 
 <style lang="scss">
 
+//::-webkit-scrollbar {
+//  width: .8em;
+//}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.logout {
+  position: absolute;
+  right: 5px;
 }
 
 </style>
