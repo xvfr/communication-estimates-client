@@ -30,6 +30,7 @@
 
 import Vue from 'vue'
 import navigationLink from '@/components/navigation-link.vue'
+import api from '@/api'
 
 interface iNavigationLink {
 	placeholder? : string,
@@ -49,6 +50,8 @@ export default Vue.extend( {
 
 	created () {
 		this.renderNavigation()
+
+		api.defaults.headers.common['Authorization'] = this.$store.state.user.token
 	},
 
 	computed : {

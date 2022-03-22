@@ -1,4 +1,5 @@
 import axios from 'axios'
+// import store from '@/store'
 
 // declare let process : {
 // 	env : {
@@ -11,16 +12,14 @@ const api = axios.create( {
 	baseURL : 'http://localhost:3000/api/',
 
 	headers : {
-		'Content-Type': 'application/json'
+		'Content-Type' : 'application/json'
 	}
 
 } )
 
-// api.defaults.headers
-
-// api.interceptors.response.use( response => {
+// api.interceptors.response.use( response => response, error => {
 //
-// 	if ( response.status == 401 )
+// 	if ( error.response.status == 401 )
 // 		return store.dispatch( 'logout' )
 //
 // } )

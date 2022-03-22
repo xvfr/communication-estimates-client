@@ -25,11 +25,15 @@ export default new Vuex.Store( {
 		login : ( state, token ) => {
 			state.user.isAuthorized = true
 			state.user.token = token
+
+			api.defaults.headers.common['Authorization'] = token
 		},
 
 		logout : state => {
 			state.user.isAuthorized = false
 			state.user.token = ''
+
+			delete api.defaults.headers.common['Authorization']
 		}
 
 	},

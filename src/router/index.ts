@@ -7,6 +7,7 @@ import Home from '@/views/home.vue'
 import Login from '@/views/login.vue'
 import Test from '@/views/test.vue'
 import NotFound from '@/views/not-found.vue'
+import Contracts from '@/views/contracts.vue'
 
 Vue.use( VueRouter )
 
@@ -29,6 +30,16 @@ const routes : Array<RouteConfig> = [
 
 		meta : {
 			requiredAuth : false,
+			isNavigationLink : true
+		}
+	},
+	{
+		path : '/contracts',
+		name : 'Договоры',
+		component : Contracts,
+
+		meta : {
+			requiredAuth : true,
 			isNavigationLink : true
 		}
 	},
