@@ -29,13 +29,18 @@
 		<v-card-text>
 
 		  <v-form
-			  v-model="valid">
+			  v-model="valid"
+			  @keyup.native.enter="auth"
+		  >
 
 			<v-text-field
 				label="Логин или e-mail"
 				v-model="login"
 				required
 				:rules="loginRules"
+				tabindex="1"
+				:disabled="loading"
+				:loading="loading"
 			/>
 			<v-text-field
 				label="Пароль"
@@ -43,13 +48,18 @@
 				required
 				:rules="passwordRules"
 				type="password"
+				tabindex="2"
+				:disabled="loading"
+				:loading="loading"
 			/>
 
 			<v-btn
-				@click="auth"
 				color="primary"
 				outlined
-				:disabled="!valid"
+				:disabled="!valid || loading"
+				tabindex="3"
+				@click="auth"
+				:loading="loading"
 			>
 			  Авторизоваться
 			</v-btn>
@@ -80,7 +90,6 @@ export default Vue.extend( {
 		loading : false,
 
 		error : '',
-
 		valid : false,
 
 		login : '',
@@ -99,6 +108,7 @@ export default Vue.extend( {
 
 		async auth () {
 
+			this.valid = false
 			this.loading = true
 			this.error = ''
 
@@ -114,37 +124,13 @@ export default Vue.extend( {
 			}
 
 			setTimeout( () => {
-
+				this.valid = true
 				this.loading = false
-
-			}, 2000 )
+			}, 3000 )
 
 		}
 
-	},
+	}
 
 } )
 </script>
-
-<style lang="scss">
-
-.progress-wrapper {
-
-  position: absolute;
-  width: 100%;
-  height: 100.5%;
-  background: rgba(0, 0, 0, .3);
-
-  z-index: 9999;
-
-  .progress {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-  }
-
-}
-
-</style>

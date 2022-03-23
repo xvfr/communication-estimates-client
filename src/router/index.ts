@@ -8,6 +8,7 @@ import Login from '@/views/login.vue'
 import Test from '@/views/test.vue'
 import NotFound from '@/views/not-found.vue'
 import Contracts from '@/views/contracts.vue'
+import Amortization from '@/views/amortization.vue'
 
 Vue.use( VueRouter )
 
@@ -37,6 +38,16 @@ const routes : Array<RouteConfig> = [
 		path : '/contracts',
 		name : 'Договоры',
 		component : Contracts,
+
+		meta : {
+			requiredAuth : true,
+			isNavigationLink : true
+		}
+	},
+	{
+		path : '/amortization',
+		name : 'Амортизация т\\с',
+		component : Amortization,
 
 		meta : {
 			requiredAuth : true,
