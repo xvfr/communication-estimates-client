@@ -45,7 +45,7 @@ const routes : Array<RouteConfig> = [
 		}
 	},
 	{
-		path : '/amortization',
+		path : '/amortizations',
 		name : 'Амортизация т\\с',
 		component : Amortization,
 

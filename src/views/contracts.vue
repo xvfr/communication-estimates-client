@@ -2,9 +2,12 @@
 
   <v-container class="fill-height">
 	<v-row>
-	  <v-col cols="6" offset="3">
+	  <v-col cols="8" offset="2">
+
+		<h1 class="mb-5">Договоры</h1>
 
 		<v-text-field
+			v-if="!loading"
 			v-model="search"
 			append-icon="mdi-magnify"
 			label="Поиск"
@@ -106,16 +109,8 @@ export default Vue.extend( {
 		try {
 
 			const data = await api.get( 'contracts' )
-
-			setTimeout( () => {
-
-				this.items = data.data.items
-
-				console.log( data.data.items )
-
-				this.loading = false
-
-			}, 2000 )
+			this.items = data.data.items
+			this.loading = false
 
 		} catch ( e ) {
 			console.log( e )
