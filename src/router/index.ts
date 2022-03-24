@@ -10,6 +10,7 @@ import Contracts from '@/views/contracts.vue'
 import Customers from '@/views/customers.vue'
 import Amortization from '@/views/amortization.vue'
 import Contractors from '@/views/contractors.vue'
+import PriceList from '@/views/price-list.vue'
 
 Vue.use( VueRouter )
 
@@ -69,6 +70,16 @@ const routes : Array<RouteConfig> = [
 		path : '/amortizations',
 		name : 'Амортизация т\\с',
 		component : Amortization,
+
+		meta : {
+			requiredAuth : true,
+			isNavigationLink : true
+		}
+	},
+	{
+		path : '/price-list',
+		name : 'Прайс-лист',
+		component : PriceList,
 
 		meta : {
 			requiredAuth : true,
