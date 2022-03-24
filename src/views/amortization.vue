@@ -4,7 +4,9 @@
 	<v-row>
 	  <v-col cols="12">
 
-		<h1 class="mb-5">Расчеты амортизации</h1>
+		<h1 class="display-1">Расчеты амортизации</h1>
+
+		<new-item-button>Добавить новый расчет</new-item-button>
 
 		<v-data-table
 			class="elevation-2"
@@ -82,10 +84,30 @@
 import Vue from 'vue'
 import api from '@/api'
 import loader from '@/components/loader.vue'
+import newItemButton from '@/components/new-item-button.vue'
+
+interface AmortizationItems {
+	depreciation_id : number,
+	index : number,
+	name : string,
+	resource : number,
+	purchase_price : number,
+	capital_repair_cost : number,
+	total_cost_current_repair : number,
+	service_life : number,
+	average_yearly_mileage : number,
+	average_monthly_mileage : number,
+	current_maintenance_cost : number,
+	depreciation_price : number,
+	practical_cost : number,
+}
 
 export default Vue.extend( {
 
 	name : 'amortization',
+	components : {
+		newItemButton
+	},
 
 	data () {
 		return {
@@ -153,12 +175,12 @@ export default Vue.extend( {
 				}
 			],
 
-			items : []
+			items : [] as AmortizationItems[]
 
 		}
 	},
 
-	async mounted () {
+	async created () {
 
 		try {
 
@@ -192,6 +214,4 @@ export default Vue.extend( {
 
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

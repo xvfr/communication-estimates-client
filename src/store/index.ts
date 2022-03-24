@@ -48,7 +48,7 @@ export default new Vuex.Store( {
 			} )
 
 			commit( 'login', user.data.token )
-			router.push( '/about' )
+			router.push( '/' )
 			localStorage.setItem( 'token', user.data.token )
 		},
 

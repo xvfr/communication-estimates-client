@@ -3,7 +3,7 @@
 	<v-row>
 	  <v-col cols="10" offset="1">
 
-		<h1>Home page</h1>
+		<h1 class="display-2">Home page</h1>
 		<img alt="Vue logo" src="../assets/logo.png">
 
 	  </v-col>

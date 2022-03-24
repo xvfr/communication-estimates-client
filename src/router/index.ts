@@ -5,10 +5,11 @@ import store from '@/store'
 // Components
 import Home from '@/views/home.vue'
 import Login from '@/views/login.vue'
-import Test from '@/views/test.vue'
 import NotFound from '@/views/not-found.vue'
 import Contracts from '@/views/contracts.vue'
+import Customers from '@/views/customers.vue'
 import Amortization from '@/views/amortization.vue'
+import Contractors from '@/views/contractors.vue'
 
 Vue.use( VueRouter )
 
@@ -45,6 +46,26 @@ const routes : Array<RouteConfig> = [
 		}
 	},
 	{
+		path : '/customers',
+		name : 'Заказчики',
+		component : Customers,
+
+		meta : {
+			requiredAuth : true,
+			isNavigationLink : true
+		}
+	},
+	{
+		path : '/contractors',
+		name : 'Подрядчики',
+		component : Contractors,
+
+		meta : {
+			requiredAuth : true,
+			isNavigationLink : true
+		}
+	},
+	{
 		path : '/amortizations',
 		name : 'Амортизация т\\с',
 		component : Amortization,
@@ -54,30 +75,21 @@ const routes : Array<RouteConfig> = [
 			isNavigationLink : true
 		}
 	},
-	{
-		path : '/about',
-		name : 'about',
-		// route level code-splitting
-		// this generates a separate chunk (about.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component : () => import(/* webpackChunkName: "about" */ '../views/about.vue'),
-
-		meta : {
-			isNavigationLink : true
-		}
-	},
-	{
-		path : '/test',
-		name : 'test',
-		component : Test,
-
-		meta : {
-			isNavigationLink : true
-		}
-	},
+	// {
+	// 	path : '/about',
+	// 	name : 'about',
+	// 	// route level code-splitting
+	// 	// this generates a separate chunk (about.[hash].js) for this route
+	// 	// which is lazy-loaded when the route is visited.
+	// 	component : () => import(/* webpackChunkName: "about" */ '../views/about.vue'),
+	//
+	// 	meta : {
+	// 		isNavigationLink : true
+	// 	}
+	// },
 	{
 		path : '*',
-		name : 'error page',
+		name : 'Страница не найдена',
 		component : NotFound
 	}
 

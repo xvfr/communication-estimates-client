@@ -4,7 +4,9 @@
 	<v-row>
 	  <v-col cols="8" offset="2">
 
-		<h1 class="mb-5">Договоры</h1>
+		<h1 class="display-1">Договоры</h1>
+
+		<new-item-button class="mb-0 test">Добавить новый договор</new-item-button>
 
 		<v-text-field
 			v-if="!loading"
@@ -48,7 +50,6 @@
 			{{ item.created_date | date }}
 		  </template>
 
-
 		</v-data-table>
 	  </v-col>
 	</v-row>
@@ -60,10 +61,13 @@
 
 import Vue from 'vue'
 import api from '@/api'
+import newItemButton from '@/components/new-item-button.vue'
 
 export default Vue.extend( {
 	name : 'contracts',
-	components : {},
+	components : {
+		newItemButton
+	},
 
 	data () {
 		return {
@@ -104,7 +108,7 @@ export default Vue.extend( {
 		}
 	},
 
-	async mounted () {
+	async created () {
 
 		try {
 
