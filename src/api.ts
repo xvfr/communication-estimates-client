@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import store from '@/store'
+import store from '@/store'
 
 // declare let process : {
 // 	env : {
@@ -17,11 +17,15 @@ const api = axios.create( {
 
 } )
 
-// api.interceptors.response.use( response => response, error => {
-//
-// 	if ( error.response.status == 401 )
-// 		return store.dispatch( 'logout' )
-//
-// } )
+api.interceptors.response.use( response => response, error => {
+
+	if ( error.response.status == 401 )
+		return store.dispatch( 'logout' )
+
+	store.commit( 'error', error.response?.data?.error )
+
+	throw error
+
+} )
 
 export default api

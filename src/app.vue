@@ -19,7 +19,19 @@
 	  </v-app-bar>
 
 	  <v-main app>
-		<router-view />
+
+		<v-snackbar
+			v-model="$store.state.error.active"
+			:timeout="5000"
+			shaped
+			color="error"
+		>
+		  <div class="text-center">
+			<b>Ошибка!</b> {{ $store.state.error.text }}
+		  </div>
+		</v-snackbar>
+
+		<router-view @onError="processError" />
 	  </v-main>
 
 	</v-app>
@@ -44,14 +56,21 @@ export default Vue.extend( {
 		navigationLink
 	},
 
-	data : () => ( {
-		routes : [] as Array<iNavigationLink>
-	} ),
+	data () {
+		return {
+
+			routes : [] as Array<iNavigationLink>,
+
+			error : false,
+			errorText : '',
+
+		}
+	},
 
 	created () {
 		this.renderNavigation()
 
-		api.defaults.headers.common['Authorization'] = this.$store.state.user.token
+		api.defaults.headers.common[ 'Authorization' ] = this.$store.state.user.token
 	},
 
 	computed : {
@@ -67,6 +86,11 @@ export default Vue.extend( {
 
 		logout () {
 			this.$store.dispatch( 'logout' )
+		},
+
+		processError ( message : string ) {
+			this.error = true
+			this.errorText = message
 		},
 
 		renderNavigation () {

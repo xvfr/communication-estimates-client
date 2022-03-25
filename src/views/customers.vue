@@ -82,7 +82,8 @@ export default Vue.extend( {
 			this.loading = false
 
 		} catch ( e ) {
-			console.log( e )
+			console.error( e )
+			this.$emit( 'onError', e.response?.data?.error )
 		}
 
 	}

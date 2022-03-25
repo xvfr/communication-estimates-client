@@ -24,6 +24,7 @@
 			loader-height="2"
 			:items-per-page="15"
 			:search="search"
+			:custom-filter="customFilter"
 		>
 
 		  <template v-slot:item.name="{ item } ">
@@ -117,10 +118,26 @@ export default Vue.extend( {
 			this.loading = false
 
 		} catch ( e ) {
-			console.log( e )
+			console.error( e )
+			this.$emit( 'onError', e.response?.data?.error )
 		}
 
+	},
+
+	methods : {
+		customFilter ( value : any, search : any, item : any ) {
+
+			if ( !value || !search )
+				return true
+
+			return value.includes( search )
+				|| new Date( item.created_date ).toLocaleDateString().includes( search.replaceAll( /(\.|\\|,)/g, '/' ) )
+				|| !!item.customers.find( ( e : any ) => e.customer_name.toLowerCase().includes( search.toLowerCase() ) )
+				|| !!item.contractors.find( ( e : any ) => e.contractor_name.toLowerCase().includes( search.toLowerCase() ) )
+
+		}
 	}
+
 } )
 
 </script>

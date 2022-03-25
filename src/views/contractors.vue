@@ -78,11 +78,11 @@ export default Vue.extend( {
 
 			const data = await api.get( 'contractors' )
 			this.items = data.data.items
-
 			this.loading = false
 
 		} catch ( e ) {
-			console.log( e )
+			console.error( e )
+			this.$emit( 'onError', e.response?.data?.error )
 		}
 
 	}

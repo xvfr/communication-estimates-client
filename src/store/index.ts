@@ -12,6 +12,11 @@ export default new Vuex.Store( {
 		user : {
 			isAuthorized : false,
 			token : localStorage.getItem( 'token' ) || ''
+		},
+
+		error : {
+			active : false,
+			text : ''
 		}
 
 	},
@@ -22,18 +27,23 @@ export default new Vuex.Store( {
 
 	mutations : {
 
+		error : ( state, message ) => {
+			state.error.active = true
+			state.error.text = message
+		},
+
 		login : ( state, token ) => {
 			state.user.isAuthorized = true
 			state.user.token = token
 
-			api.defaults.headers.common['Authorization'] = token
+			api.defaults.headers.common[ 'Authorization' ] = token
 		},
 
 		logout : state => {
 			state.user.isAuthorized = false
 			state.user.token = ''
 
-			delete api.defaults.headers.common['Authorization']
+			delete api.defaults.headers.common[ 'Authorization' ]
 		}
 
 	},
