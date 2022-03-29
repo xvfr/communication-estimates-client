@@ -12,6 +12,7 @@ import Amortization from '@/views/amortization.vue'
 import Contractors from '@/views/contractors.vue'
 import Equipments from '@/views/equipments.vue'
 import PriceList from '@/views/price-list.vue'
+import expenditureItems from '@/views/expenditure-items.vue'
 
 Vue.use( VueRouter )
 
@@ -91,6 +92,16 @@ const routes : Array<RouteConfig> = [
 		path : '/price-list',
 		name : 'Прайс-лист',
 		component : PriceList,
+
+		meta : {
+			requiredAuth : true,
+			isNavigationLink : true
+		}
+	},
+	{
+		path : '/expenditure-items',
+		name : 'Статьи расходов',
+		component : expenditureItems,
 
 		meta : {
 			requiredAuth : true,
