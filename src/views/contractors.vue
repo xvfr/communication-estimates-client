@@ -33,7 +33,7 @@
 		  </template>
 
 		  <template v-slot:item.name="{ item }">
-			<a class="item" :href="`contractors/${item.contractor_id}`">{{ item.name }}</a>
+			<a class="item" :href="`contractors?search=${item.name}`">{{ item.name }}</a>
 		  </template>
 
 		  <template v-slot:item.actions="{ item }">

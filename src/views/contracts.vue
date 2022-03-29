@@ -33,7 +33,7 @@
 
 		  <template v-slot:item.customers="{ item } ">
 			<span v-if="item.customers.length">
-			  <a class="item" :href="`customers/${customer.customer_id}`"
+			  <a class="item" :href="`customers?search=${customer.customer_name}`"
 				 v-for="customer in item.customers">{{ customer.customer_name }}</a>
 			</span>
 			<small v-else>нет</small>
@@ -41,7 +41,7 @@
 
 		  <template v-slot:item.contractors="{ item } ">
 			<span v-if="item.contractors.length">
-				<a class="item" :href="`contractors/${contractor.contractor_id}`"
+				<a class="item" :href="`contractors?search=${contractor.contractor_name}`"
 				   v-for="contractor in item.contractors">{{ contractor.contractor_name }}</a>
 			</span>
 			<small v-else>нет</small>

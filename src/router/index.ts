@@ -10,6 +10,7 @@ import Contracts from '@/views/contracts.vue'
 import Customers from '@/views/customers.vue'
 import Amortization from '@/views/amortization.vue'
 import Contractors from '@/views/contractors.vue'
+import Equipments from '@/views/equipments.vue'
 import PriceList from '@/views/price-list.vue'
 
 Vue.use( VueRouter )
@@ -77,6 +78,16 @@ const routes : Array<RouteConfig> = [
 		}
 	},
 	{
+		path : '/equipments',
+		name : 'Оборудование',
+		component : Equipments,
+
+		meta : {
+			requiredAuth : true,
+			isNavigationLink : true
+		}
+	},
+	{
 		path : '/price-list',
 		name : 'Прайс-лист',
 		component : PriceList,
@@ -86,6 +97,7 @@ const routes : Array<RouteConfig> = [
 			isNavigationLink : true
 		}
 	},
+
 	// {
 	// 	path : '/about',
 	// 	name : 'about',
@@ -98,6 +110,7 @@ const routes : Array<RouteConfig> = [
 	// 		isNavigationLink : true
 	// 	}
 	// },
+
 	{
 		path : '*',
 		name : 'Страница не найдена',
