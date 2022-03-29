@@ -191,7 +191,6 @@ export default Vue.extend( {
 
 		} catch ( e ) {
 			console.error( e )
-			this.$emit( 'onError', e.response?.data?.error )
 		}
 
 	},

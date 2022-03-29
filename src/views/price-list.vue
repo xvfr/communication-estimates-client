@@ -6,7 +6,11 @@
 
 		<h1 class="display-1">Прайс Лист</h1>
 
+		<!-- add item -->
+
 		<new-item-button @click.native="createItem">Добавить новый элемент</new-item-button>
+
+		<!-- search -->
 
 		<v-text-field
 			v-if="!loading"
@@ -25,6 +29,7 @@
 			loading-text="Загрузка..."
 			loader-height="2"
 			no-data-text="Нет сохраненных элементов"
+			no-results-text="Не найдено ни одного подходящего элемента"
 			:items-per-page="-1"
 			:search="search"
 		>
@@ -49,59 +54,39 @@
 
 		<!-- modal dialogs -->
 
-		<v-dialog v-model="dialogEdit" max-width="35%">
-		  <v-card v-if="target">
-			<v-card-title class="text-h5">
-			  {{ target.price_id ? 'Редактирование' : 'Создание' }}
-			</v-card-title>
-			<v-card-text class="pb-0">
-			  <v-form v-model="valid">
-				<v-container>
-				  <v-row>
-					<v-col>
-					  <v-textarea
-						  v-model="target.title"
-						  label="Наименование"
-						  counter="255"
-						  :rules="[rules.required]"
-					  />
-					</v-col>
-				  </v-row>
-				  <v-row>
-					<v-col>
-					  <v-text-field
-						  v-model="target.price"
-						  label="Цена"
-						  hint="Необязательное поле"
-						  :rules="[rules.number, rules.positive]"
-					  />
-					</v-col>
-				  </v-row>
-				</v-container>
-			  </v-form>
-			</v-card-text>
-			<v-card-actions>
-			  <v-spacer></v-spacer>
-			  <v-btn plain color="grey" @click="dialogEdit = false">Отмена</v-btn>
-			  <v-btn plain color="success" :loading="loading" @click="saveItemConfirm" :disabled="!valid">Сохранить
-			  </v-btn>
-			  <v-spacer></v-spacer>
-			</v-card-actions>
-		  </v-card>
-		</v-dialog>
+		<edit-item-dialog @confirm="saveItemConfirm" :dialogEdit.sync="dialogEdit" :rules="rules" :target="target"
+						  :loading="loading">
 
-		<v-dialog v-model="dialogDelete" max-width="25%">
-		  <v-card>
-			<v-card-title class="text-h5">Удаление</v-card-title>
-			<v-card-text class="pb-0">Вы действительно хотите удалить этот элемент?</v-card-text>
-			<v-card-actions>
-			  <v-spacer></v-spacer>
-			  <v-btn plain color="grey" @click="dialogDelete = false">Отмена</v-btn>
-			  <v-btn plain color="error" :loading="loading" @click="deleteItemConfirm">Удалить</v-btn>
-			  <v-spacer></v-spacer>
-			</v-card-actions>
-		  </v-card>
-		</v-dialog>
+		  <template v-slot:header v-if="target">
+			{{ target.price_id ? 'Редактирование' : 'Создание' }}
+		  </template>
+
+		  <template v-if="target">
+			<v-row>
+			  <v-col>
+				<v-textarea
+					v-model="target.title"
+					label="Наименование"
+					counter="255"
+					:rules="[rules.required]"
+				/>
+			  </v-col>
+			</v-row>
+			<v-row>
+			  <v-col>
+				<v-text-field
+					v-model="target.price"
+					label="Цена"
+					hint="Необязательное поле"
+					:rules="[rules.number, rules.positive]"
+				/>
+			  </v-col>
+			</v-row>
+		  </template>
+
+		</edit-item-dialog>
+
+		<delete-item-dialog @confirm="deleteItemConfirm" :dialogDelete.sync="dialogDelete" :loading="loading" />
 
 	  </v-col>
 	</v-row>
@@ -113,6 +98,8 @@
 import Vue from 'vue'
 import api from '@/api'
 import newItemButton from '@/components/new-item-button.vue'
+import deleteItemDialog from '@/components/delete-item-dialog.vue'
+import editItemDialog from '@/components/edit-item-dialog.vue'
 
 interface Item {
 	price_id : number,
@@ -123,7 +110,9 @@ interface Item {
 export default Vue.extend( {
 	name : 'price-list',
 	components : {
-		newItemButton
+		newItemButton,
+		deleteItemDialog,
+		editItemDialog
 	},
 
 	data () {
@@ -135,7 +124,6 @@ export default Vue.extend( {
 
 			dialogDelete : false,
 			dialogEdit : false,
-
 			target : {} as Item | undefined,
 
 			headers : [
@@ -152,8 +140,7 @@ export default Vue.extend( {
 					text : 'Цена',
 					align : 'end',
 					value : 'price'
-				}
-				,
+				},
 				{
 					text : 'Действия',
 					align : 'end',
@@ -181,9 +168,14 @@ export default Vue.extend( {
 			this.items = data.data.items
 			this.loading = false
 		} catch ( e ) {
-			this.$emit( 'onError', e.response?.data?.error )
+			console.error( e )
 		}
 
+	},
+
+	mounted () {
+		if ( this.$route.query.search )
+			this.search = String( this.$route.query.search )
 	},
 
 	filters : {

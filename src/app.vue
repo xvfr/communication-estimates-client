@@ -31,7 +31,7 @@
 		  </div>
 		</v-snackbar>
 
-		<router-view @onError="processError" />
+		<router-view />
 	  </v-main>
 
 	</v-app>
