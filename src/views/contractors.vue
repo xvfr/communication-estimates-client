@@ -6,7 +6,7 @@
 
 		<h1 class="display-1">Подрядчики</h1>
 
-		<new-item-button>Добавить нового подрядчика</new-item-button>
+		<new-item-button @click.native="createItem">Добавить нового подрядчика</new-item-button>
 
 		<v-text-field
 			v-if="!loading"
