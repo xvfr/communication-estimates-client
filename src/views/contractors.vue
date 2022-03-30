@@ -29,7 +29,7 @@
 		>
 
 		  <template v-slot:item.index="{ item }">
-			{{ items.indexOf( item ) + 1 }}
+			#{{ items.indexOf( item ) + 1 }}
 		  </template>
 
 		  <template v-slot:item.name="{ item }">
