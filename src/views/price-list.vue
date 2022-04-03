@@ -96,35 +96,26 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import api from '@/api'
-import newItemButton from '@/components/new-item-button.vue'
-import deleteItemDialog from '@/components/delete-item-dialog.vue'
-import editItemDialog from '@/components/edit-item-dialog.vue'
-
-interface Item {
-	price_id : number,
-	title : string,
-	price : number | null
-}
+import crudDialogMixin from '@/components/crud-dialog-mixin'
 
 export default Vue.extend( {
+
 	name : 'price-list',
-	components : {
-		newItemButton,
-		deleteItemDialog,
-		editItemDialog
-	},
+	mixins : [ crudDialogMixin ],
 
 	data () {
 		return {
-
 			search : '',
 			valid : false,
 			loading : true,
 
-			dialogDelete : false,
-			dialogEdit : false,
-			target : {} as Item | undefined,
+			id : 'price_id',
+			baseUrl : 'price-list',
+			defaultTarget : {
+				price_id : 0,
+				title : '',
+				price : null
+			},
 
 			headers : [
 				{
@@ -150,8 +141,6 @@ export default Vue.extend( {
 				}
 			],
 
-			items : [] as Item[],
-
 			rules : {
 				required : ( val : string ) => !!val || 'Обязательное поле',
 				number : ( val : string ) => !isNaN( Number( val ) ) || 'Только числа',
@@ -159,18 +148,6 @@ export default Vue.extend( {
 			}
 
 		}
-	},
-
-	async created () {
-
-		try {
-			const data = await api.get( 'price-list' )
-			this.items = data.data.items
-			this.loading = false
-		} catch ( e ) {
-			console.error( e )
-		}
-
 	},
 
 	mounted () {
@@ -182,101 +159,7 @@ export default Vue.extend( {
 		delimiter ( value : number ) {
 			return value.toLocaleString()
 		}
-	},
-
-	methods : {
-
-		// create
-
-		createItem () {
-			this.target = {
-				price_id : 0,
-				title : '',
-				price : null
-			}
-			this.dialogEdit = true
-		},
-
-		// edit
-
-		editItem ( price_id : number ) {
-			this.target = Object.assign( {}, this.items.find( e => e.price_id == price_id ) )
-			this.dialogEdit = true
-		},
-
-		// save
-
-		async saveItemConfirm () {
-
-			if ( !this.target )
-				return
-
-			this.loading = true
-
-			try {
-
-				if ( !this.target.price_id ) {
-
-					// create new item
-
-					const response = await api.post( `price-list`, {
-						title : this.target.title,
-						price : this.target.price
-					} )
-
-					this.target.price_id = response.data.inserted_id
-					this.items.push( this.target )
-
-				} else {
-
-					// update exist item
-
-					await api.put( `price-list/${ this.target.price_id }`, {
-						title : this.target.title,
-						price : this.target.price
-					} )
-
-					this.$set( this.items, this.items.findIndex( e => e.price_id == this.target?.price_id ), this.target )
-
-				}
-
-			} finally {
-				this.target = undefined
-				this.loading = false
-				this.dialogEdit = false
-			}
-
-		},
-
-		// delete
-
-		deleteItem ( price_id : number ) {
-			this.target = Object.assign( {}, this.items.find( e => e.price_id == price_id ) )
-			this.dialogDelete = true
-		},
-
-		async deleteItemConfirm () {
-
-			this.loading = true
-
-			try {
-
-				// delete item
-
-				await api.delete( `price-list/${ this.target?.price_id }` )
-				this.items.splice( this.items.findIndex( e => e.price_id == this.target?.price_id ), 1 )
-
-			} finally {
-				this.target = undefined
-				this.loading = false
-				this.dialogDelete = false
-			}
-
-		}
-
 	}
 
 } )
 </script>
-
-<style lang="scss" scoped></style>

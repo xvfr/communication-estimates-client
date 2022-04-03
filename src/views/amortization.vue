@@ -205,49 +205,35 @@
 </template>
 
 <script lang="ts">
-
 import Vue from 'vue'
-import api from '@/api'
-import newItemButton from '@/components/new-item-button.vue'
-import deleteItemDialog from '@/components/delete-item-dialog.vue'
-import editItemDialog from '@/components/edit-item-dialog.vue'
-
-const baseUrl = 'amortizations'
-const id = 'depreciation_id'
-
-interface Item {
-	[ id ] : number,
-	name : string,
-	resource : number | null,
-	purchase_price : number | null,
-	capital_repair_cost : number | null,
-	total_cost_current_repair : number | null,
-	service_life : number | null,
-	average_yearly_mileage : number | null,
-	average_monthly_mileage : number | null,
-	current_maintenance_cost : number | null,
-	depreciation_price : number | null,
-	practical_cost : number | null,
-}
+import crudDialogMixin from '@/components/crud-dialog-mixin'
 
 export default Vue.extend( {
 
 	name : 'amortization',
-	components : {
-		newItemButton,
-		editItemDialog,
-		deleteItemDialog
-	},
+	mixins : [crudDialogMixin],
 
 	data () {
 		return {
-			id : id,
 			loading : true,
 			search : '',
 
-			dialogDelete : false,
-			dialogEdit : false,
-			target : {} as Item | undefined,
+			id : 'depreciation_id',
+			baseUrl : 'amortizations',
+			defaultTarget : {
+				depreciation_id : 0,
+				name : '',
+				resource : null,
+				purchase_price : null,
+				capital_repair_cost : null,
+				total_cost_current_repair : null,
+				service_life : null,
+				average_yearly_mileage : null,
+				average_monthly_mileage : null,
+				current_maintenance_cost : null,
+				practical_cost : null,
+				depreciation_price : null
+			},
 
 			headers : [
 				{
@@ -317,8 +303,6 @@ export default Vue.extend( {
 				}
 			],
 
-			items : [] as Item[],
-
 			rules : {
 				required : ( val : string ) => !!val || 'Обязательное поле',
 				number : ( val : string ) => !isNaN( Number( val ) ) || 'Только числа',
@@ -326,21 +310,6 @@ export default Vue.extend( {
 			}
 
 		}
-	},
-
-	async created () {
-
-		try {
-
-			const data = await api.get( 'amortizations' )
-			this.items = data.data.items
-
-			this.loading = false
-
-		} catch ( e ) {
-			console.error( e )
-		}
-
 	},
 
 	mounted () {
@@ -355,121 +324,6 @@ export default Vue.extend( {
 			return titles[ ( number % 100 > 4 && number % 100 < 20 ) ? 2 : cases[ ( number % 10 < 5 ) ? number % 10 : 5 ] ]
 		},
 
-		// create
-
-		createItem () {
-			this.target = {
-				[ id ] : 0,
-				name : '',
-				resource : null,
-				purchase_price : null,
-				capital_repair_cost : null,
-				total_cost_current_repair : null,
-				service_life : null,
-				average_yearly_mileage : null,
-				average_monthly_mileage : null,
-				current_maintenance_cost : null,
-				practical_cost : null,
-				depreciation_price : null
-			}
-			this.dialogEdit = true
-		},
-
-		// edit
-
-		editItem ( identifier : number ) {
-			this.target = Object.assign( {}, this.items.find( e => e[ id ] == identifier ) )
-			this.dialogEdit = true
-		},
-
-		// save
-
-		async saveItemConfirm () {
-
-			if ( !this.target )
-				return
-
-			this.loading = true
-
-			try {
-
-				if ( !this.target[ id ] ) {
-
-					// create new item
-
-					const response = await api.post( baseUrl, {
-						name : this.target.name,
-						resource : this.target.resource,
-						purchase_price : this.target.purchase_price,
-						capital_repair_cost : this.target.capital_repair_cost,
-						total_cost_current_repair : this.target.total_cost_current_repair,
-						service_life : this.target.service_life,
-						average_yearly_mileage : this.target.average_yearly_mileage,
-						average_monthly_mileage : this.target.average_monthly_mileage,
-						current_maintenance_cost : this.target.current_maintenance_cost,
-						practical_cost : this.target.practical_cost,
-						depreciation_price : this.target.depreciation_price
-					} )
-
-					this.target[ id ] = response.data.inserted_id
-					this.items.push( this.target )
-
-				} else {
-
-					// update exist item
-
-					await api.put( `${ baseUrl }/${ this.target[ id ] }`, {
-						name : this.target.name,
-						resource : this.target.resource,
-						purchase_price : this.target.purchase_price,
-						capital_repair_cost : this.target.capital_repair_cost,
-						total_cost_current_repair : this.target.total_cost_current_repair,
-						service_life : this.target.service_life,
-						average_yearly_mileage : this.target.average_yearly_mileage,
-						average_monthly_mileage : this.target.average_monthly_mileage,
-						current_maintenance_cost : this.target.current_maintenance_cost,
-						practical_cost : this.target.practical_cost,
-						depreciation_price : this.target.depreciation_price
-					} )
-
-					this.$set( this.items, this.items.findIndex( e => e[ id ] == this.target?.[ id ] ), this.target )
-
-				}
-
-			} finally {
-				this.target = undefined
-				this.loading = false
-				this.dialogEdit = false
-			}
-
-		},
-
-		// delete
-
-		deleteItem ( identifier : number ) {
-			this.target = Object.assign( {}, this.items.find( e => e[ id ] == identifier ) )
-			this.dialogDelete = true
-		},
-
-		async deleteItemConfirm () {
-
-			this.loading = true
-
-			try {
-
-				// delete item
-
-				await api.delete( `${ baseUrl }/${ this.target?.[ id ] }` )
-				this.items.splice( this.items.findIndex( e => e[ id ] == this.target?.[ id ] ), 1 )
-
-			} finally {
-				this.target = undefined
-				this.loading = false
-				this.dialogDelete = false
-			}
-
-		}
-
 	},
 
 	filters : {
@@ -479,7 +333,4 @@ export default Vue.extend( {
 	}
 
 } )
-
 </script>
-
-<style lang="scss" scoped></style>

@@ -6,7 +6,7 @@
 		<slot name="header"></slot>
 	  </v-card-title>
 	  <v-card-text class="pb-0">
-		<v-form v-model="valid">
+		<v-form v-model="valid" @submit.prevent="$emit('confirm')">
 		  <v-container>
 			<slot></slot>
 		  </v-container>

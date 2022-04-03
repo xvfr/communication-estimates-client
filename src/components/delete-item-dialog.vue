@@ -7,7 +7,7 @@
 	  <v-card-actions>
 		<v-spacer></v-spacer>
 		<v-btn plain color="grey" @click="dialog = false">Отмена</v-btn>
-		<v-btn plain color="error" :loading="loading" @click="$emit('confirm')">
+		<v-btn plain color="error" :loading="loading" @click="$emit('confirm')" @keyup.enter="$emit('confirm')">
 		  Удалить
 		</v-btn>
 		<v-spacer></v-spacer>

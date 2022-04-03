@@ -6,7 +6,7 @@
 
 		<h1 class="display-1">Договоры</h1>
 
-		<new-item-button class="mb-0 test">Добавить новый договор</new-item-button>
+		<new-item-button @click.native="createItem">Добавить новый договор</new-item-button>
 
 		<v-text-field
 			v-if="!loading"
@@ -25,10 +25,12 @@
 			:items-per-page="15"
 			:search="search"
 			:custom-filter="customFilter"
+			no-data-text="Нет сохраненных договоров"
+			no-results-text="Не найдено ни одного подходящего элемента"
 		>
 
 		  <template v-slot:item.name="{ item } ">
-			<a :href="`contracts/${item.contract_id}`">{{ item.name }}</a>
+			<a class="text-decoration-none" :href="`contracts?search=${item.name}`">{{ item.name }}</a>
 		  </template>
 
 		  <template v-slot:item.customers="{ item } ">
@@ -51,7 +53,39 @@
 			{{ item.created_date | date }}
 		  </template>
 
+		  <template v-slot:item.actions="{ item }">
+			<v-icon small @click="editItem(item[id])" class="mr-2">mdi-pencil</v-icon>
+			<v-icon small @click="deleteItem(item[id])">mdi-delete</v-icon>
+		  </template>
+
 		</v-data-table>
+
+		<!-- modal dialogs -->
+
+		<edit-item-dialog @confirm="saveItemConfirm" :dialogEdit.sync="dialogEdit" :rules="rules" :target="target"
+						  :loading="loading">
+
+		  <template v-slot:header v-if="target">
+			{{ target[ id ] ? 'Редактирование' : 'Создание' }}
+		  </template>
+
+		  <template v-if="target">
+			<v-row>
+			  <v-col>
+				<v-text-field
+					v-model="target.name"
+					label="Наименование"
+					counter="75"
+					:rules="[rules.required]"
+				/>
+			  </v-col>
+			</v-row>
+		  </template>
+
+		</edit-item-dialog>
+
+		<delete-item-dialog @confirm="deleteItemConfirm" :dialogDelete.sync="dialogDelete" :loading="loading" />
+
 	  </v-col>
 	</v-row>
   </v-container>
@@ -59,22 +93,26 @@
 </template>
 
 <script lang="ts">
-
 import Vue from 'vue'
-import api from '@/api'
-import newItemButton from '@/components/new-item-button.vue'
+import crudDialogMixin from '@/components/crud-dialog-mixin'
 
 export default Vue.extend( {
+
 	name : 'contracts',
-	components : {
-		newItemButton
-	},
+	mixins : [ crudDialogMixin ],
 
 	data () {
 		return {
 			search : '',
-
 			loading : true,
+
+			id : 'contract_id',
+			baseUrl : 'contracts',
+			defaultTarget : {
+				contract_id : 0,
+				// name : '',
+				// contracts_count : 0
+			},
 
 			headers : [
 				{
@@ -96,10 +134,20 @@ export default Vue.extend( {
 					text : 'Дата',
 					align : 'end',
 					value : 'created_date'
+				},
+				{
+					text : 'Действия',
+					align : 'end',
+					value : 'actions',
+					sortable : false,
+					filterable : false
 				}
 			],
 
-			items : []
+			rules : {
+				required : ( val : string ) => !!val || 'Обязательное поле'
+			}
+
 		}
 	},
 
@@ -109,21 +157,13 @@ export default Vue.extend( {
 		}
 	},
 
-	async created () {
-
-		try {
-
-			const data = await api.get( 'contracts' )
-			this.items = data.data.items
-			this.loading = false
-
-		} catch ( e ) {
-			console.error( e )
-		}
-
+	mounted () {
+		if ( this.$route.query.search )
+			this.search = String( this.$route.query.search )
 	},
 
 	methods : {
+
 		customFilter ( value : any, search : any, item : any ) {
 
 			if ( !value || !search )
@@ -134,7 +174,8 @@ export default Vue.extend( {
 				|| !!item.customers.find( ( e : any ) => e.customer_name.toLowerCase().includes( search.toLowerCase() ) )
 				|| !!item.contractors.find( ( e : any ) => e.contractor_name.toLowerCase().includes( search.toLowerCase() ) )
 
-		}
+		},
+
 	}
 
 } )

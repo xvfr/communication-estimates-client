@@ -77,37 +77,25 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import newItemButton from '@/components/new-item-button.vue'
-import api from '@/api'
-import deleteItemDialog from '@/components/delete-item-dialog.vue'
-import editItemDialog from '@/components/edit-item-dialog.vue'
-
-const baseUrl = 'customers'
-const id = 'customer_id'
-
-interface Item {
-	[ id ] : number,
-	name : string,
-	contracts_count : number
-}
+import crudDialogMixin from '@/components/crud-dialog-mixin'
 
 export default Vue.extend( {
+
 	name : 'customers',
-	components : {
-		newItemButton,
-		deleteItemDialog,
-		editItemDialog
-	},
+	mixins : [ crudDialogMixin ],
 
 	data () {
 		return {
-			id : id,
 			loading : false,
 			search : '',
 
-			dialogDelete : false,
-			dialogEdit : false,
-			target : {} as Item | undefined,
+			id : 'customer_id',
+			baseUrl : 'customers',
+			defaultTarget : {
+				customer_id : 0,
+				name : '',
+				contracts_count : 0
+			},
 
 			headers : [
 				{
@@ -133,7 +121,6 @@ export default Vue.extend( {
 					filterable : false
 				}
 			],
-			items : [] as Item[],
 
 			rules : {
 				required : ( val : string ) => !!val || 'Обязательное поле'
@@ -141,113 +128,9 @@ export default Vue.extend( {
 		}
 	},
 
-	async created () {
-
-		try {
-
-			const data = await api.get( baseUrl )
-			this.items = data.data.items
-			this.loading = false
-
-		} catch ( e ) {
-			console.error( e )
-		}
-
-	},
-
 	mounted () {
 		if ( this.$route.query.search )
 			this.search = String( this.$route.query.search )
-	},
-
-	methods : {
-
-		// create
-
-		createItem () {
-			this.target = {
-				[ id ] : 0,
-				name : '',
-				contracts_count : 0
-			}
-			this.dialogEdit = true
-		},
-
-		// edit
-
-		editItem ( identifier : number ) {
-			this.target = Object.assign( {}, this.items.find( e => e[ id ] == identifier ) )
-			this.dialogEdit = true
-		},
-
-		// save
-
-		async saveItemConfirm () {
-
-			if ( !this.target )
-				return
-
-			this.loading = true
-
-			try {
-
-				if ( !this.target[ id ] ) {
-
-					// create new item
-
-					const response = await api.post( baseUrl, {
-						name : this.target.name
-					} )
-
-					this.target[ id ] = response.data.inserted_id
-					this.items.push( this.target )
-
-				} else {
-
-					// update exist item
-
-					await api.put( `${ baseUrl }/${ this.target[ id ] }`, {
-						name : this.target.name
-					} )
-
-					this.$set( this.items, this.items.findIndex( e => e[ id ] == this.target?.[ id ] ), this.target )
-
-				}
-
-			} finally {
-				this.target = undefined
-				this.loading = false
-				this.dialogEdit = false
-			}
-
-		},
-
-		// delete
-
-		deleteItem ( identifier : number ) {
-			this.target = Object.assign( {}, this.items.find( e => e[ id ] == identifier ) )
-			this.dialogDelete = true
-		},
-
-		async deleteItemConfirm () {
-
-			this.loading = true
-
-			try {
-
-				// delete item
-
-				await api.delete( `${ baseUrl }/${ this.target?.[ id ] }` )
-				this.items.splice( this.items.findIndex( e => e[ id ] == this.target?.[ id ] ), 1 )
-
-			} finally {
-				this.target = undefined
-				this.loading = false
-				this.dialogDelete = false
-			}
-
-		}
-
 	}
 
 } )
