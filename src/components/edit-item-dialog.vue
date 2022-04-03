@@ -1,6 +1,6 @@
 <template>
 
-  <v-dialog v-model="dialog" max-width="35%">
+  <v-dialog v-model="dialog" max-width="50%">
 	<v-card v-if="target">
 	  <v-card-title class="text-h5">
 		<slot name="header"></slot>

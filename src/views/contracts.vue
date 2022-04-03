@@ -80,6 +80,45 @@
 				/>
 			  </v-col>
 			</v-row>
+			<v-row>
+			  <v-col>
+				<v-autocomplete
+					v-model="target.customers"
+					auto-select-first
+					clearable
+					multiple
+					:items="customers"
+					item-value="customer_id"
+					item-text="name"
+					label="Заказчик"
+					no-data-text="Нет сохраненных заказчиков"
+				></v-autocomplete>
+			  </v-col>
+			  <v-col>
+				<v-autocomplete
+					v-model="target.contractors"
+					auto-select-first
+					clearable
+					multiple
+					:items="contractors"
+					item-value="contractor_id"
+					item-text="name"
+					label="Подрядчик"
+					no-data-text="Нет сохраненных подрядчиков"
+				></v-autocomplete>
+			  </v-col>
+			</v-row>
+			<v-row>
+			  <v-col>
+				<v-text-field
+					v-model="target.created_date"
+					label="Дата заключения договора"
+					type="date"
+					clearable
+					:rules="[rules.required]"
+				/>
+			  </v-col>
+			</v-row>
 		  </template>
 
 		</edit-item-dialog>
@@ -95,6 +134,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import crudDialogMixin from '@/components/crud-dialog-mixin'
+import api from '@/api'
 
 export default Vue.extend( {
 
@@ -106,12 +146,17 @@ export default Vue.extend( {
 			search : '',
 			loading : true,
 
+			customers : [],
+			contractors : [],
+
 			id : 'contract_id',
 			baseUrl : 'contracts',
 			defaultTarget : {
 				contract_id : 0,
-				// name : '',
-				// contracts_count : 0
+				name : '',
+				contracts_count : 0,
+				customers : [],
+				contractors : []
 			},
 
 			headers : [
@@ -145,7 +190,7 @@ export default Vue.extend( {
 			],
 
 			rules : {
-				required : ( val : string ) => !!val || 'Обязательное поле'
+				required : ( val : string ) => !!val?.length && !!val || 'Обязательное поле'
 			}
 
 		}
@@ -155,6 +200,20 @@ export default Vue.extend( {
 		date ( date : string ) {
 			return new Date( date ).toLocaleDateString()
 		}
+	},
+
+	created () {
+
+		;( async () => {
+			const customers = await api.get( 'customers' )
+			this.customers = customers.data.items
+		} )()
+
+		;( async () => {
+			const contractors = await api.get( 'contractors' )
+			this.contractors = contractors.data.items
+		} )()
+
 	},
 
 	mounted () {
@@ -174,7 +233,7 @@ export default Vue.extend( {
 				|| !!item.customers.find( ( e : any ) => e.customer_name.toLowerCase().includes( search.toLowerCase() ) )
 				|| !!item.contractors.find( ( e : any ) => e.contractor_name.toLowerCase().includes( search.toLowerCase() ) )
 
-		},
+		}
 
 	}
 
